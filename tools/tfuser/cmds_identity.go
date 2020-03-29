@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/pkg/errors"
 	"github.com/threefoldtech/zos/pkg/identity"
@@ -42,6 +43,11 @@ func cmdsGenerateID(c *cli.Context) error {
 
 	if err := k.Save(c.String("output")); err != nil {
 		return errors.Wrap(err, "failed to save seed")
+	}
+
+	idFile := fmt.Sprintf("%s.id", c.String("output"))
+	if err := ioutil.WriteFile(idFile, []byte(fmt.Sprint(id)), 0400); err != nil {
+		return errors.Wrap(err, "failed to save id file")
 	}
 
 	fmt.Printf("Your ID is: %d\n", id)

@@ -14,7 +14,7 @@ import (
 	"github.com/threefoldtech/zos/pkg/crypto"
 	"github.com/threefoldtech/zos/pkg/provision"
 	"github.com/threefoldtech/zos/pkg/schema"
-	"github.com/threefoldtech/zos/tools/client"
+	"github.com/threefoldtech/zos/tools/client/builder"
 
 	"github.com/urfave/cli"
 )
@@ -110,7 +110,7 @@ func cmdsProvision(c *cli.Context) error {
 		}
 	}
 
-	signer, err := client.NewSignerFromFile(seedPath)
+	signer, err := builder.NewSignerFromFile(seedPath)
 	if err != nil {
 		return errors.Wrapf(err, "could not find seed file at %s", seedPath)
 	}
@@ -208,7 +208,7 @@ func cmdsDeleteReservation(c *cli.Context) error {
 		return errors.Wrap(err, "failed to get reservation info")
 	}
 
-	signer, err := client.NewSignerFromFile(seedPath)
+	signer, err := builder.NewSignerFromFile(seedPath)
 	if err != nil {
 		return errors.Wrapf(err, "could not find seed file at %s", seedPath)
 	}
