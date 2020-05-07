@@ -61,12 +61,12 @@ type Networker interface {
 	Addrs(iface string, netns string) ([]net.IP, error)
 
 	// ZOSAddresses monitoring streams for ZOS bridge IPs
-	ZOSAddresses(ctx context.Context) <-chan NetlinkAddresses
+	ZOSAddresses(ctx context.Context) <-chan []string
 
 	// DMZAddresses monitoring streams for dmz public interface
-	DMZAddresses(ctx context.Context) <-chan NetlinkAddresses
+	DMZAddresses(ctx context.Context) <-chan []string
 
-	PublicAddresses(ctx context.Context) <-chan NetlinkAddresses
+	PublicAddresses(ctx context.Context) <-chan []string
 }
 
 // Network represent the description if a user private network

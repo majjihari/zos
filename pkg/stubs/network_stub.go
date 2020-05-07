@@ -2,9 +2,10 @@ package stubs
 
 import (
 	"context"
+	"net"
+
 	zbus "github.com/threefoldtech/zbus"
 	pkg "github.com/threefoldtech/zos/pkg"
-	"net"
 )
 
 type NetworkerStub struct {
@@ -56,8 +57,8 @@ func (s *NetworkerStub) CreateNR(arg0 pkg.Network) (ret0 string, ret1 error) {
 	return
 }
 
-func (s *NetworkerStub) DMZAddresses(ctx context.Context) (<-chan pkg.NetlinkAddresses, error) {
-	ch := make(chan pkg.NetlinkAddresses)
+func (s *NetworkerStub) DMZAddresses(ctx context.Context) (<-chan []string, error) {
+	ch := make(chan []string)
 	recv, err := s.client.Stream(ctx, s.module, s.object, "DMZAddresses")
 	if err != nil {
 		return nil, err
@@ -65,7 +66,7 @@ func (s *NetworkerStub) DMZAddresses(ctx context.Context) (<-chan pkg.NetlinkAdd
 	go func() {
 		defer close(ch)
 		for event := range recv {
-			var obj pkg.NetlinkAddresses
+			var obj []string
 			if err := event.Unmarshal(&obj); err != nil {
 				panic(err)
 			}
@@ -149,8 +150,8 @@ func (s *NetworkerStub) Leave(arg0 pkg.NetID, arg1 string) (ret0 error) {
 	return
 }
 
-func (s *NetworkerStub) PublicAddresses(ctx context.Context) (<-chan pkg.NetlinkAddresses, error) {
-	ch := make(chan pkg.NetlinkAddresses)
+func (s *NetworkerStub) PublicAddresses(ctx context.Context) (<-chan []string, error) {
+	ch := make(chan []string)
 	recv, err := s.client.Stream(ctx, s.module, s.object, "PublicAddresses")
 	if err != nil {
 		return nil, err
@@ -158,7 +159,7 @@ func (s *NetworkerStub) PublicAddresses(ctx context.Context) (<-chan pkg.Netlink
 	go func() {
 		defer close(ch)
 		for event := range recv {
-			var obj pkg.NetlinkAddresses
+			var obj []string
 			if err := event.Unmarshal(&obj); err != nil {
 				panic(err)
 			}
@@ -213,8 +214,8 @@ func (s *NetworkerStub) ZDBPrepare(arg0 []uint8) (ret0 string, ret1 error) {
 	return
 }
 
-func (s *NetworkerStub) ZOSAddresses(ctx context.Context) (<-chan pkg.NetlinkAddresses, error) {
-	ch := make(chan pkg.NetlinkAddresses)
+func (s *NetworkerStub) ZOSAddresses(ctx context.Context) (<-chan []string, error) {
+	ch := make(chan []string)
 	recv, err := s.client.Stream(ctx, s.module, s.object, "ZOSAddresses")
 	if err != nil {
 		return nil, err
@@ -222,7 +223,7 @@ func (s *NetworkerStub) ZOSAddresses(ctx context.Context) (<-chan pkg.NetlinkAdd
 	go func() {
 		defer close(ch)
 		for event := range recv {
-			var obj pkg.NetlinkAddresses
+			var obj []string
 			if err := event.Unmarshal(&obj); err != nil {
 				panic(err)
 			}

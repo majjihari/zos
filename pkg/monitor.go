@@ -16,7 +16,6 @@ import (
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/net"
-	"github.com/vishvananda/netlink"
 )
 
 // VirtualMemoryStat struct
@@ -63,12 +62,6 @@ type NicIOCounterStat struct {
 
 // NicsIOCounterStat alias for []NicIOCounterStat
 type NicsIOCounterStat []NicIOCounterStat
-
-// NetlinkAddress alias
-type NetlinkAddress netlink.Addr
-
-// NetlinkAddresses alias for [][]NetlinkAddress
-type NetlinkAddresses []NetlinkAddress
 
 // PoolStats is pool statistics reported by storaged
 type PoolStats struct {

@@ -714,9 +714,9 @@ func (n *networker) getAddresses(nsName, link string) ([]netlink.Addr, error) {
 	return addr, err
 }
 
-func (n *networker) monitorNS(ctx context.Context, name string, links ...string) <-chan pkg.NetlinkAddresses {
-	get := func() (pkg.NetlinkAddresses, error) {
-		var result pkg.NetlinkAddresses
+func (n *networker) monitorNS(ctx context.Context, name string, links ...string) <-chan []string {
+	get := func() ([]string, error) {
+		var result []string
 		for _, link := range links {
 			values, err := n.getAddresses(name, link)
 			if err != nil {
@@ -724,7 +724,7 @@ func (n *networker) monitorNS(ctx context.Context, name string, links ...string)
 			}
 
 			for _, value := range values {
-				result = append(result, pkg.NetlinkAddress(value))
+				result = append(result, value.String())
 			}
 		}
 
@@ -732,7 +732,7 @@ func (n *networker) monitorNS(ctx context.Context, name string, links ...string)
 	}
 
 	addresses, _ := get()
-	ch := make(chan pkg.NetlinkAddresses)
+	ch := make(chan []string)
 	go func() {
 		monitorCtx, cancel := context.WithCancel(context.Background())
 
@@ -777,15 +777,15 @@ func (n *networker) monitorNS(ctx context.Context, name string, links ...string)
 	return ch
 }
 
-func (n *networker) DMZAddresses(ctx context.Context) <-chan pkg.NetlinkAddresses {
+func (n *networker) DMZAddresses(ctx context.Context) <-chan []string {
 	return n.monitorNS(ctx, ndmz.NetNSNDMZ, ndmz.DMZPub4, ndmz.DMZPub6)
 }
 
-func (n *networker) PublicAddresses(ctx context.Context) <-chan pkg.NetlinkAddresses {
+func (n *networker) PublicAddresses(ctx context.Context) <-chan []string {
 	return n.monitorNS(ctx, types.PublicNamespace, types.PublicIface)
 }
 
-func (n *networker) ZOSAddresses(ctx context.Context) <-chan pkg.NetlinkAddresses {
+func (n *networker) ZOSAddresses(ctx context.Context) <-chan []string {
 	// we don't use monitorNS because
 	// 1- this is the host namespace
 	// 2- the ZOS bridge must exist all the time
@@ -799,11 +799,11 @@ func (n *networker) ZOSAddresses(ctx context.Context) <-chan pkg.NetlinkAddresse
 		log.Fatal().Err(err).Msgf("could not find the '%s' bridge", types.DefaultBridge)
 	}
 
-	get := func() pkg.NetlinkAddresses {
-		var result pkg.NetlinkAddresses
+	get := func() []string {
+		var result []string
 		values, _ := netlink.AddrList(link, netlink.FAMILY_ALL)
 		for _, value := range values {
-			result = append(result, pkg.NetlinkAddress(value))
+			result = append(result, value.String())
 		}
 
 		return result
@@ -811,7 +811,7 @@ func (n *networker) ZOSAddresses(ctx context.Context) <-chan pkg.NetlinkAddresse
 
 	addresses := get()
 
-	ch := make(chan pkg.NetlinkAddresses)
+	ch := make(chan []string)
 	go func() {
 		defer close(ch)
 		for {

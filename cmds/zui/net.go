@@ -9,7 +9,6 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 	"github.com/pkg/errors"
 	"github.com/threefoldtech/zbus"
-	"github.com/threefoldtech/zos/pkg"
 	"github.com/threefoldtech/zos/pkg/stubs"
 )
 
@@ -39,29 +38,16 @@ func addressRender(ctx context.Context, table *widgets.Table, client zbus.Client
 		return err
 	}
 
-	toString := func(al pkg.NetlinkAddresses) string {
-		var buf strings.Builder
-		for _, a := range al {
-			if buf.Len() > 0 {
-				buf.WriteString(", ")
-			}
-
-			buf.WriteString(a.String())
-		}
-
-		return buf.String()
-	}
-
 	go func() {
 		for {
 			table.ColumnWidths = []int{6, table.Size().X - 9}
 			select {
 			case a := <-zos:
-				table.Rows[0][1] = toString(a)
+				table.Rows[0][1] = strings.Join(a, ",")
 			case a := <-dmz:
-				table.Rows[1][1] = toString(a)
+				table.Rows[1][1] = strings.Join(a, ",")
 			case a := <-pub:
-				table.Rows[2][1] = toString(a)
+				table.Rows[2][1] = strings.Join(a, ",")
 			}
 
 			render.Signal()
