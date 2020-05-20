@@ -96,3 +96,66 @@ Layouts:
     - nodes are behind an IPv4 NAT router, but without IPv6
   - nodes with multiple NICS, where the network is separated in OOB and workload traffic
   - nodes with multiple NICs, where the workload traffic is made highly available.
+
+
+#### nodes with a single connection
+
+- where the node receives an IPv4 address that is globally routed
+
+That node will boot normally, but you'll also need to consider that the ndmz interface wil __also__ need an IPv4 address. In such an environment a node will need 2 IPv4 addresses. There is a reason for that: as we build wireguard interfaces we need to be sure that the destination port will never be occupied by some NAT conntrack, and as that is in a constant flux, it would be difficult to be sure the port  is unused.
+
+**ERGO**: 2 IPv4 addresses per node, can be dynamic or static, but try to make the leases as static as possible
+
+For IPv6, if your router provides for a Router Advertisment for an IPv6 prefix, you're all set, the node will pick it up and set up it's ndmz with another. For IPv6 no worries about the number of addresses in your prefix allocation, a `/64` (smallest entity in IPv6) can have 2^64 addresses... go ahead, grab your calculator and have a look, I'll wait.
+
+If you run a segment with only IPv6, hop! you're all set, but with the important distinction that your node will only be reachable over IPv6 directly. So to expose workloads for IPv4 clients, you'll need to have access to tcp proxies that bridge the deep schism between IPv4 and IPv6.
+
+- where a node is dual-stacked, has only private-space (rfc1918) IPv4 and globally routed IPv6
+
+Seen the scarcity of IPv4, one might opt to do solely IPv6, but still have a node in the rack some private IPv4 for management; basically the same applies as an IPv6-only segment, with the difference that you ... meh, there is no real difference...
+
+
+- multi-homed nodes 
+
+Ok, in DC's farmers tend to listen to enterprise guys and their penchant for High-Availability. While we're convinced that these kinds of setup create more problems than they solve, bonds are supported, so if you have 2 switches with MLAG, you can request a bond for the workloads you define. (tbd)
+
+
+
+## IPv6 integration for nodes that have only IPv4
+
+There are a few use cases:
+
+- user networks
+- single nodes in a home setting
+- multiple nodes in a farm on the same segment
+
+We __should__ really be convinced that NAT ins an IPv6 space is definitely not done. Hence, the existing solution for assigning an ula prefix from the farmer_id and Network resources prefixes from the node_id, and then dual-nat the IPv6 __still__ needs IPv6 in the `ndmz` namespace.
+
+So: what if we start to manage IPv6 prefixes __again__ in the Explorer, where a farmer has an IP-transit agreement with a farmer that __has__ IPv6.
+
+That way, we can use all the code we already have for WG meshes, give __real__ ipv6 to a farmer with fully hidden nodes.
+
+There are some implementation details though:
+
+- single node, fully hidden in an IPv4 RFC1918 network:
+nothing needs to be done, once it has a peer, the transit farmer has merely to route the packets, and on the single node, we don't have to run an RA, as it's only the node itself.  
+The ULA prefix of the NR will be able to connect local 0-DBs, and in case the 0-DB is remote, the ULA address of the NR will be NATed over the Global addr on the WG interface to the transit farmer
+
+- multiple nodes, fully hidden in an IPv4 RFC1918 network:
+can be two(three)fold :
+  - handle them each as a single node
+  - make one node a router and RA and route a /64 prefix that is requested from the Explorer.  
+
+  - Alternatively, we can __always__ request a /64 from the explorer in the transit farmer's allocation, and have it handy in case another node gets added.
+  For that, workloads can then have a standard route from their ULA to that Global IPv6, where the 0-DBs won't need an ULA address any more.
+  Given the ease for receiving allocations, a transit framer can easily request a `/48 /44 /40` by merely asking for them. Which enven with a `/48` , the transit farmer can hand out 16K prefixes, with a `/40` that number would be `2^24 = 16M` (million)
+
+- user networks, IPv4 and IPv6
+  Right now, the IPv6 ULA address that gets assigned to a container is only needed to reach the local 0-DB in case of hidden nodes, or, in case of publicly reachable 0-DB to reach all of them.  
+  This is both unconvenient and a limitation, as a workload on a hidden node can only use local 0-DBs.  
+  We could re-introduce the same principle of exitpoints in User Networks, and give each NR a valid prefix (`/64`), or even a subnet of that prefix. Keeping IPv4 as it is, while having routable IPv6 in the NRs.
+  With that setup, an exitpoint is merely a diode firewall, unless in a later phase we would want to add filters to allow certain traffic into that User Network.
+
+  A **BIG** word of warning with the actual IPv4 setup, though, is that a node in a home network (or a private DC) has virtually full access to that network. A User NR, by means of the double NAT that is in place, can snoop (or at least nmap) the whole network in which it lives. We'll have to add a proper rule in NDMZ that there is only forwarding to the default gateway possible.
+
+## Nodes that have only IPv4
