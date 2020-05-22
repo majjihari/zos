@@ -156,6 +156,15 @@ can be two(three)fold :
   We could re-introduce the same principle of exitpoints in User Networks, and give each NR a valid prefix (`/64`), or even a subnet of that prefix. Keeping IPv4 as it is, while having routable IPv6 in the NRs.
   With that setup, an exitpoint is merely a diode firewall, unless in a later phase we would want to add filters to allow certain traffic into that User Network.
 
-  A **BIG** word of warning with the actual IPv4 setup, though, is that a node in a home network (or a private DC) has virtually full access to that network. A User NR, by means of the double NAT that is in place, can snoop (or at least nmap) the whole network in which it lives. We'll have to add a proper rule in NDMZ that there is only forwarding to the default gateway possible.
+A **BIG** word of warning with the actual IPv4 setup, though, is that a node in a home network (or a private DC) has virtually full access to that network. A User NR, by means of the double NAT that is in place, can snoop (or at least nmap) the whole network in which it lives. We'll have to add a proper rule in NDMZ that there is only forwarding to the default gateway possible.
 
 ## Nodes that have only IPv4
+
+Ok, let's talk about Zerotier, the panacea, 42, deus ex machina, what it is, what it doesn't and why we think it's not a great fit.
+
+- the zerotier infrastructure is an overlay **switch**. There, I said it. L2. While that seems the very best idea, L2 talks. __A lot__. Certainly Zerotier, as it's penchant to try to discover peers, it crafts it's own packets, and sends them out on any interface it can find. whether or not that interface has a default route, or even if that crafted packet is sent out from the same ip on that interface. To alleviate that a little, you need to install a whole bunch of drop routes, enable martian filtering and even then... these packets get still generated and are effectively put on the nic. A part from poisioning neighbour tables and arp caches, these things might be ok in single-nic nodes, but with multiple nics, it's really a whole load of cruft on __all__ your networks.
+all the to do some nat hole punching which is notoriously unreliable and a kludge.
+- there are 6 places that are intermediate hosts, they have moves 3 times already (hosted -> gcp -> back to hosted). These sites are the ultimate packet forwarders when peers are not directly reachable (60% of the cases) and are __sslllooowwww__ at best. This is logical because these nodes carry virtually __all__ networks and need to do encryption for all of them. So yeah, running our own moons might help, but then we need to force all zt clients to orbit these moons too. The more, we never know a farmers network, how it's connected and when there is some dual nat, the zt won't work. Like in : will not.
+- Zerotier is not TF. Any changes to policy, suddenly making their service payable per network or per client and we're hosed. Although they say we could run our own, they want $$ for it.
+- 2.0 is still way off.
+- the magical ad-hoc networks are accidents waiting to happen. Also
