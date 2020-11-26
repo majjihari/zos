@@ -19,12 +19,6 @@ import (
 
 const gib = 1024 * 1024 * 1024
 
-// Provisioner interface
-type Provisioner interface {
-	Provision(ctx context.Context, reservation *Reservation) (*Result, error)
-	Decommission(ctx context.Context, reservation *Reservation) error
-}
-
 // Engine is the core of this package
 // The engine is responsible to manage provision and decomission of workloads on the system
 type Engine struct {
