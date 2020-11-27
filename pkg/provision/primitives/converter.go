@@ -250,6 +250,7 @@ func WorkloadToProvisionType(w workloads.Workloader) (*provision.Reservation, er
 
 	reservation := &provision.Reservation{
 		ID:        fmt.Sprintf("%d-%d", w.GetID(), w.WorkloadID()),
+		NodeID:    w.GetNodeID(),
 		User:      fmt.Sprintf("%d", w.GetCustomerTid()),
 		Type:      provision.ReservationType(w.GetWorkloadType().String()),
 		Created:   w.GetEpoch().Time,
