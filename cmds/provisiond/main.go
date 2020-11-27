@@ -167,7 +167,7 @@ func main() {
 			provision.NewDecommissionSource(store),
 		),
 		Provisioner: provisioner,
-		Janitor:     provision.NewJanitor(zbusCl, puller),
+		Janitor:     primitives.NewJanitor(zbusCl, puller),
 	})
 
 	server.Register(zbus.ObjectID{Name: module, Version: "0.0.1"}, pkg.Provision(engine))
@@ -196,9 +196,4 @@ func main() {
 		log.Error().Err(err).Msg("unexpected error")
 	}
 	log.Info().Msg("provision engine stopped")
-}
-
-type store interface {
-	provision.ReservationPoller
-	provision.Feedbacker
 }
