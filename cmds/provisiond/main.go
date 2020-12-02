@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -28,6 +29,7 @@ import (
 
 const (
 	module = "provision"
+	gib    = 1024 * 1024 * 1024
 )
 
 func main() {
@@ -135,9 +137,14 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to upgrade cached reservations")
 	}
 
-	capacity, err := store.CurrentCounters()
+	initial, err := store.CurrentCounters()
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to get current deployed capacity")
+	}
+	// update initial capacity with
+	reserved, err := getNodeReserved(zbusCl)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to get node reserved capacity")
 	}
 
 	handlers := primitives.NewPrimitivesProvisioner(zbusCl)
@@ -150,7 +157,8 @@ func main() {
 		provision.NewCachedProvisioner(
 			primitives.NewStatisticsProvisioner(
 				handlers,
-				capacity,
+				initial,
+				reserved,
 				nodeID.Identity(),
 				cl.Directory,
 			),
@@ -198,4 +206,26 @@ func main() {
 		log.Error().Err(err).Msg("unexpected error")
 	}
 	log.Info().Msg("provision engine stopped")
+}
+
+func getNodeReserved(cl zbus.Client) (counter primitives.Counters, err error) {
+	storage := stubs.NewStorageModuleStub(cl)
+	fs, err := storage.GetCacheFS()
+	if err != nil {
+		return counter, err
+	}
+
+	var v *primitives.AtomicValue
+	switch fs.DiskType {
+	case pkg.HDDDevice:
+		v = &counter.HRU
+	case pkg.SSDDevice:
+		v = &counter.SRU
+	default:
+		return counter, fmt.Errorf("unknown cache disk type '%s'", fs.DiskType)
+	}
+
+	v.Increment(fs.Usage.Size)
+	counter.MRU.Increment(2 * gib)
+	return
 }
