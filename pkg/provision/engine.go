@@ -1,14 +1,12 @@
 package provision
 
 import (
-	"bytes"
 	"context"
-	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"time"
 
-	"github.com/jbenet/go-base58"
+	"github.com/patrickmn/go-cache"
 	"github.com/threefoldtech/zos/pkg"
 
 	"github.com/robfig/cron/v3"
@@ -22,10 +20,12 @@ const gib = 1024 * 1024 * 1024
 // Engine is the core of this package
 // The engine is responsible to manage provision and decomission of workloads on the system
 type Engine struct {
-	source ReservationSource
-
+	source      ReservationSource
 	provisioner Provisioner
 	janitor     Janitor
+	// mem is an in memory cache to make sure reservations
+	// are not processes twice in case of bad source implementations
+	mem *cache.Cache
 }
 
 // EngineOps are the configuration of the engine
@@ -51,6 +51,7 @@ func New(opts EngineOps) *Engine {
 		source:      opts.Source,
 		provisioner: opts.Provisioner,
 		janitor:     opts.Janitor,
+		mem:         cache.New(30*time.Minute, time.Minute),
 	}
 }
 
@@ -108,6 +109,12 @@ func (e *Engine) Run(ctx context.Context) error {
 					continue
 				}
 			} else {
+				if _, ok := e.mem.Get(reservation.ID); ok {
+					log.Debug().Str("id", reservation.ID).Msg("reservation received twice, skipping")
+					continue
+				}
+				e.mem.Set(reservation.ID, struct{}{}, cache.DefaultExpiration)
+
 				slog.Info().Msg("start provisioning reservation")
 				if err := e.provision(ctx, &reservation.Reservation); err != nil {
 					log.Error().Err(err).Msg("failed to provision reservation")
@@ -144,30 +151,6 @@ func (e *Engine) provision(ctx context.Context, reservation *Reservation) error 
 	if _, err := e.provisioner.Provision(ctx, reservation); err != nil {
 		return err
 	}
-
-	// we only cache successful reservations
-	// r.ID = realID
-	// r.Result = *result
-	// if err := e.cache.Add(r, false); err != nil {
-	// 	return errors.Wrapf(err, "failed to cache reservation %s locally", r.ID)
-	// }
-
-	// // If an update occurs on the network we don't increment the counter
-	// if r.Type == "network_resource" {
-	// 	nr := pkg.NetResource{}
-	// 	if err := json.Unmarshal(r.Data, &nr); err != nil {
-	// 		return fmt.Errorf("failed to unmarshal network from reservation: %w", err)
-	// 	}
-
-	// 	uniqueID := NetworkID(r.User, nr.Name)
-	// 	exists, err := e.cache.NetworkExists(string(uniqueID))
-	// 	if err != nil {
-	// 		return errors.Wrap(err, "failed to check if network exists")
-	// 	}
-	// 	if exists {
-	// 		return nil
-	// 	}
-	// }
 
 	return nil
 }
@@ -265,16 +248,3 @@ func (e *Engine) Counters(ctx context.Context) <-chan pkg.ProvisionCounters {
 
 // 	return ch
 // }
-
-// NetworkID construct a network ID based on a userID and network name
-func NetworkID(userID, name string) pkg.NetID {
-	buf := bytes.Buffer{}
-	buf.WriteString(userID)
-	buf.WriteString(name)
-	h := md5.Sum(buf.Bytes())
-	b := base58.Encode(h[:])
-	if len(b) > 13 {
-		b = b[:13]
-	}
-	return pkg.NetID(string(b))
-}

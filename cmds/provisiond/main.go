@@ -154,20 +154,20 @@ func main() {
 	 *	     --- handlers
 	 */
 	provisioner := explorer.NewCommitterProvisioner(
-		provision.NewCachedProvisioner(
-			primitives.NewStatisticsProvisioner(
-				handlers,
-				initial,
-				reserved,
-				nodeID.Identity(),
-				cl.Directory,
-			),
-			store,
-		),
 		cl.Workloads,
 		primitives.ResultToSchemaType,
 		identity,
 		nodeID.Identity(),
+		provision.NewCachedProvisioner(
+			store,
+			primitives.NewStatisticsProvisioner(
+				initial,
+				reserved,
+				nodeID.Identity(),
+				cl.Directory,
+				handlers,
+			),
+		),
 	)
 
 	puller := explorer.NewPoller(cl.Workloads, primitives.WorkloadToProvisionType, primitives.ProvisionOrder)
