@@ -42,51 +42,64 @@ jobs:
 
     - name: Uploading flist (${{ github.ref }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: archive
         token: ${{ secrets.HUB_JWT }}
         name: zos-${{ github.ref }}.flist
     
     - name: Rename flist from zos-${{ github.ref }}.flist to zos:${{ github.ref }}.flist
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: rename
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         name: zos-${{ github.ref }}.flist
         target: zos:${{ github.ref }}.flist
     
     - name: Symlink flist (development)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: crosslink
-        user: tf-zos
+#        user: tf-zos
+        user: og-zos
         name: zos:development:latest.flist
-        target: tf-autobuilder/zos:${{ github.ref }}.flist
+#        target: tf-autobuilder/zos:${{ github.ref }}.flist
+        target: og-autobuilder/zos:${{ github.ref }}.flist
     
     - name: Symlink flist (testing)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: crosslink
-        user: tf-zos
+#        user: tf-zos
+        user: og-zos
         name: zos:testing:latest.flist
-        target: tf-autobuilder/zos:${{ github.ref }}.flist
+#        target: tf-autobuilder/zos:${{ github.ref }}.flist
+        target: og-autobuilder/zos:${{ github.ref }}.flist
 
     - name: Symlink flist (production)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: crosslink
-        user: tf-zos
+#        user: tf-zos
+        user: og-zos
         name: zos:production:latest.flist
-        target: tf-autobuilder/zos:${{ github.ref }}.flist
+#        target: tf-autobuilder/zos:${{ github.ref }}.flist
+        target: og-autobuilder/zos:${{ github.ref }}.flist
 

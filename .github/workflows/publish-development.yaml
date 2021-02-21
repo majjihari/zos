@@ -39,30 +39,37 @@ jobs:
         
     - name: Publish flist (${{ github.sha }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: archive
         name: zos-${{ github.sha }}.flist
     
     - name: Symlink flist (development)
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: symlink
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         name: zos-${{ github.sha }}.flist
         target: ${{ steps.setname.outputs.build }}
 
     - name: Crosslink flist (development)
       if: success() && github.ref == 'refs/heads/master'
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: crosslink
-        user: tf-zos
+#        user: tf-zos
+        user: og-zos
         name: zos:development:latest.flist
-        target: tf-autobuilder/${{ steps.setname.outputs.build }}
+#        target: tf-autobuilder/${{ steps.setname.outputs.build }}
+        target: og-autobuilder/${{ steps.setname.outputs.build }}
 

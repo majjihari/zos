@@ -55,23 +55,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/rootfs
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.hub_jwt }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: containerd.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
 
   firecracker:
@@ -94,23 +99,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/firecracker
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.hub_jwt }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: firecracker.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
 
   promtail:
@@ -133,24 +143,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/promtail
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.hub_jwt }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: promtail.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
-
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
   virtwhat:
     name: 'Package: virtwhat'
@@ -172,23 +186,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/virtwhat
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.hub_jwt }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: virtwhat.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
   logtrunc:
     name: 'Package: logtrunc'
@@ -210,23 +229,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/logtrunc
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.hub_jwt }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: logtrunc.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
   shim-logs:
     name: 'Package: shim-logs'
@@ -248,23 +272,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/shimlogs
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.hub_jwt }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: shim-logs.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
   yggdrasil:
     name: 'Package: yggdrasil'
@@ -286,23 +315,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/yggdrasil
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.hub_jwt }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: yggdrasil.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
   corex:
     name: 'Package: corex (static)'
@@ -350,23 +384,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/corex-musl
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: Crosslink flist (tf-zos-bins.dev)
       if: success() && github.ref == 'refs/heads/master'
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: corex.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
   hdparm:
     name: 'Package: hdparm'
@@ -394,23 +433,28 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/hdparm
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: Crosslink flist (tf-zos-bins)
       if: success() && github.ref == 'refs/heads/master'
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: hdparm.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist
 
   zufs:
     name: 'Package: zufs (0-fs)'
@@ -438,20 +482,25 @@ jobs:
 
     - name: Publish flist (tf-autobuilder, ${{ steps.package.outputs.name }})
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: publish
-        user: tf-autobuilder
+#        user: tf-autobuilder
+        user: og-autobuilder
         root: bins/releases/zufs
         name: ${{ steps.package.outputs.name }}.flist
 
     - name: Crosslink flist (tf-zos-bins)
       if: success()
-      uses: threefoldtech/publish-flist@master
+#      uses: threefoldtech/publish-flist@master
+      uses: majjihari/publish-flist@master
       with:
         token: ${{ secrets.HUB_JWT }}
         action: crosslink
-        user: tf-zos-bins
+#        user: tf-zos-bins
+        user: og-zos-bins
         name: 0-fs.flist
-        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+#        target: tf-autobuilder/${{ steps.package.outputs.name }}.flist
+        target: og-autobuilder/${{ steps.package.outputs.name }}.flist

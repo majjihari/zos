@@ -57,24 +57,39 @@ const (
 var (
 	envDev = Environment{
 		RunningMode: RunningDev,
-		BcdbURL:     "https://explorer.devnet.grid.tf/explorer",
-		FlistURL:    "zdb://hub.grid.tf:9900",
-		BinRepo:     "tf-zos-bins.dev",
+//		BcdbURL:     "https://explorer.devnet.grid.tf/explorer",
+//		FlistURL:    "zdb://hub.grid.tf:9900",
+//		BinRepo:     "tf-zos-bins.dev",
+
+              BcdbURL:     "https://dev-explorer.ogmesh.com/explorer",
+              FlistURL:    "zdb://flistbackend.ogmesh.com:9900",
+              BinRepo:     "og-zos-bins.dev",
+
 	}
 
 	envTest = Environment{
 		RunningMode: RunningTest,
-		BcdbURL:     "https://explorer.testnet.grid.tf/explorer",
-		FlistURL:    "zdb://hub.grid.tf:9900",
-		BinRepo:     "tf-zos-bins.test",
+//		BcdbURL:     "https://explorer.testnet.grid.tf/explorer",
+//		FlistURL:    "zdb://hub.grid.tf:9900",
+//		BinRepo:     "tf-zos-bins.test",
+
+              BcdbURL:     "https://test-explorer.ogmesh.com/explorer",
+              FlistURL:    "zdb://flistbackend.ogmesh.com:9900",
+              BinRepo:     "og-zos-bins.test",
+
 	}
 
 	// same as testnet for now. will be updated the day of the launch of production network
 	envProd = Environment{
 		RunningMode: RunningMain,
-		BcdbURL:     "https://explorer.grid.tf/explorer",
-		FlistURL:    "zdb://hub.grid.tf:9900",
-		BinRepo:     "tf-zos-bins",
+//		BcdbURL:     "https://explorer.grid.tf/explorer",
+//		FlistURL:    "zdb://hub.grid.tf:9900",
+//		BinRepo:     "tf-zos-bins",
+
+              BcdbURL:     "https://explorer.ogmesh.com/explorer",
+              FlistURL:    "zdb://flistbackend.ogmesh.com:9900",
+              BinRepo:     "og-zos-bins",
+
 	}
 )
 

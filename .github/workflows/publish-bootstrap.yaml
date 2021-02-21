@@ -36,28 +36,34 @@ jobs:
           echo "::set-output name=build::bootstrap-v$(date +%y%m%d.%-H%M%S.0)-dev.flist"
       - name: Publish flist (${{ steps.setname.outputs.build }})
         if: success()
-        uses: threefoldtech/publish-flist@master
+#        uses: threefoldtech/publish-flist@master
+        uses: majjihari/publish-flist@master
         with:
           action: publish
-          user: tf-autobuilder
+#          user: tf-autobuilder
+          user: og-autobuilder
           root: archive
           token: ${{ secrets.HUB_JWT }}
           name: ${{ steps.setname.outputs.build }}
       - name: Symlink flist (development)
         if: success()
-        uses: threefoldtech/publish-flist@master
+#        uses: threefoldtech/publish-flist@master
+        uses: majjihari/publish-flist@master
         with:
           action: symlink
-          user: tf-autobuilder
+#          user: tf-autobuilder
+          user: og-autobuilder
           token: ${{ secrets.HUB_JWT }}
           name: ${{ steps.setname.outputs.build }}
           target: bootstrap:development.flist
       - name: Symlink flist (release)
         if: success() && github.ref == 'refs/heads/master'
-        uses: threefoldtech/publish-flist@master
+#        uses: threefoldtech/publish-flist@master
+        uses: majjihari/publish-flist@master
         with:
           action: symlink
-          user: tf-autobuilder
+#          user: tf-autobuilder
+          user: og-autobuilder
           token: ${{ secrets.HUB_JWT }}
           name: ${{ steps.setname.outputs.build }}
           target: bootstrap:latest.flist

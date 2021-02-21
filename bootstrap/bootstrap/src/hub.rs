@@ -6,7 +6,8 @@ use std::fs::{write, OpenOptions};
 use std::io::copy;
 use std::path::Path;
 
-const HUB: &str = "https://hub.grid.tf";
+///const HUB: &str = "https://hub.grid.tf";
+const HUB: &str = "https://hub.ogmesh.com";
 
 type Result<T> = std::result::Result<T, Error>;
 
